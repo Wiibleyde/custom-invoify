@@ -51,10 +51,41 @@ export async function generatePdfService(req: NextRequest) {
         
         const InvoiceTemplate = await getInvoiceTemplate(templateId);
         
+        // Build PDF translations from existing steps translations
+        const pdfTranslations: Record<string, string> = {
+          // From steps.invoiceDetails
+          invoiceNumber: translations.form?.steps?.invoiceDetails?.invoiceNumber || "Invoice #",
+          invoiceDate: translations.form?.steps?.invoiceDetails?.issuedDate || "Invoice date",
+          dueDate: translations.form?.steps?.invoiceDetails?.dueDate || "Due date",
+          
+          // From steps.fromAndTo
+          billTo: translations.form?.steps?.fromAndTo?.billTo || "Bill to:",
+          
+          // From steps.lineItems
+          item: translations.form?.steps?.lineItems?.item || "Item",
+          qty: translations.form?.steps?.lineItems?.quantity || "Qty",
+          rate: translations.form?.steps?.lineItems?.rate || "Rate",
+          amount: translations.form?.steps?.lineItems?.total || "Amount",
+          
+          // From steps.summary
+          subtotal: translations.form?.steps?.summary?.subTotal || "Subtotal",
+          discount: translations.form?.steps?.summary?.discount || "Discount",
+          tax: translations.form?.steps?.summary?.tax || "Tax",
+          shipping: translations.form?.steps?.summary?.shipping || "Shipping",
+          total: translations.form?.steps?.summary?.totalAmount || "Total",
+          notes: translations.form?.steps?.summary?.additionalNotes || "Notes",
+          paymentTerms: translations.form?.steps?.summary?.paymentTerms || "Payment Terms",
+          
+          // From steps.paymentInfo
+          bankName: translations.form?.steps?.paymentInfo?.bankName || "Bank Name",
+          accountName: translations.form?.steps?.paymentInfo?.accountName || "Account Name",
+          accountNumber: translations.form?.steps?.paymentInfo?.accountNumber || "Account Number",
+        };
+        
         // Pass translations to template via props
         const templateProps = {
           ...body,
-          translations: translations.form?.invoicePdf || {},
+          translations: pdfTranslations,
         };
         
         const htmlTemplate = ReactDOMServer.renderToStaticMarkup(
@@ -90,13 +121,13 @@ export async function generatePdfService(req: NextRequest) {
             url: TAILWIND_CDN,
         });
 
-		const pdf: Uint8Array = await page.pdf({
-			format: "a4",
-			printBackground: true,
-			preferCSSPageSize: true,
-		});
+    const pdf: Uint8Array = await page.pdf({
+      format: "a4",
+      printBackground: true,
+      preferCSSPageSize: true,
+    });
 
-		return new NextResponse(new Blob([pdf], { type: "application/pdf" }), {
+    return new NextResponse(new Blob([new Uint8Array(pdf)], { type: "application/pdf" }), {
 			headers: {
 				"Content-Type": "application/pdf",
 				"Content-Disposition": "attachment; filename=invoice.pdf",
