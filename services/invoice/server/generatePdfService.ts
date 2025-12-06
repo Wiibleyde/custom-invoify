@@ -13,6 +13,24 @@ import { ENV, TAILWIND_CDN } from "@/lib/variables";
 import { InvoiceType } from "@/types";
 
 /**
+ * Load translations for a specific locale
+ */
+async function getTranslations(locale: string = "en") {
+  try {
+    const translations = await import(
+      `@/i18n/locales/${locale}.json`
+    ).then((m) => m.default || m);
+    return translations;
+  } catch {
+    // Fallback to English if locale not found
+    const translations = await import(
+      `@/i18n/locales/en.json`
+    ).then((m) => m.default || m);
+    return translations;
+  }
+}
+
+/**
  * Generate a PDF document of an invoice based on the provided data.
  *
  * @async
@@ -28,9 +46,19 @@ export async function generatePdfService(req: NextRequest) {
     try {
         const ReactDOMServer = (await import("react-dom/server")).default;
         const templateId = body.details.pdfTemplate;
+        const locale = body.details.locale || "en";
+        const translations = await getTranslations(locale);
+        
         const InvoiceTemplate = await getInvoiceTemplate(templateId);
+        
+        // Pass translations to template via props
+        const templateProps = {
+          ...body,
+          translations: translations.form?.invoicePdf || {},
+        };
+        
         const htmlTemplate = ReactDOMServer.renderToStaticMarkup(
-            InvoiceTemplate(body)
+          InvoiceTemplate(templateProps)
         );
 
 		if (ENV === "production") {

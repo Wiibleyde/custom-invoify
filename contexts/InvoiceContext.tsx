@@ -9,6 +9,9 @@ import React, {
   useState,
 } from "react";
 
+// Next Intl
+import { useLocale } from "next-intl";
+
 import { useRouter } from "next/navigation";
 
 // RHF
@@ -65,6 +68,7 @@ export const InvoiceContextProvider = ({
   children,
 }: InvoiceContextProviderProps) => {
   const router = useRouter();
+  const locale = useLocale();
 
   // Toasts
   const {
@@ -165,9 +169,18 @@ export const InvoiceContextProvider = ({
     setInvoicePdfLoading(true);
 
     try {
+      // Add locale to the data
+      const dataWithLocale = {
+        ...data,
+        details: {
+          ...data.details,
+          locale,
+        },
+      };
+
       const response = await fetch(GENERATE_PDF_API, {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify(dataWithLocale),
       });
 
       const result = await response.blob();
@@ -182,7 +195,7 @@ export const InvoiceContextProvider = ({
     } finally {
       setInvoicePdfLoading(false);
     }
-  }, []);
+  }, [locale, pdfGenerationSuccess]);
 
   /**
    * Removes the final PDF file and switches to Live Preview

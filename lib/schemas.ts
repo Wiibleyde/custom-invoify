@@ -151,6 +151,7 @@ const InvoiceDetailsSchema = z.object({
     purchaseOrderNumber: fieldValidators.stringOptional,
     currency: fieldValidators.string,
     language: fieldValidators.string,
+    locale: fieldValidators.stringOptional,
     items: z.array(ItemSchema),
     paymentInformation: PaymentInformationSchema.optional(),
     taxDetails: TaxDetailsSchema.optional(),
