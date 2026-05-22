@@ -16,7 +16,7 @@
             "fromAndTo": {
                 "billFrom": "Facturé de",
                 "billTo": "Facturé à",
-                "name": "Nom/Prénom:",
+                "name": "Nom/Prénom",
                 "address": "Adresse",
                 "zipCode": "Code postal",
                 "city": "Ville",
@@ -89,5 +89,12 @@
     },
     "footer": {
         "developedBy": "Développé par"
+    },
+    "pdf": {
+        "invoiceTitle": "Facture",
+        "paymentInformation": "Informations de paiement",
+        "contactInformation": "Contact",
+        "signature": "Signature",
+        "totalInWords": "Total en lettres"
     }
 }

@@ -1,5 +1,16 @@
 "use client";
 
+// RHF
+import { useFormContext } from "react-hook-form";
+
+// ShadCn
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+} from "@/components/ui/form";
+
 // Components
 import {
     CurrencySelector,
@@ -7,14 +18,18 @@ import {
     FormInput,
     FormFile,
     Subheading,
-    TemplateSelector,
 } from "@/app/components";
 
 // Contexts
 import { useTranslationContext } from "@/contexts/TranslationContext";
 
+// Types
+import { InvoiceType } from "@/types";
+
 const InvoiceDetails = () => {
     const { _t } = useTranslationContext();
+    const { control, watch } = useFormContext<InvoiceType>();
+    const accentColor = watch("details.accentColor") || "#2563EB";
 
     return (
         <section className="flex flex-col flex-wrap gap-5">
@@ -53,10 +68,29 @@ const InvoiceDetails = () => {
                         label={_t("form.steps.invoiceDetails.currency")}
                         placeholder="Select Currency"
                     />
-                </div>
 
-                <div className="flex flex-col gap-2">
-                    <TemplateSelector />
+                    <FormField
+                        control={control}
+                        name="details.accentColor"
+                        render={({ field }) => (
+                            <FormItem>
+                                <div className="flex w-full gap-5 items-center text-sm">
+                                    <FormLabel className="flex-1">Accent Color:</FormLabel>
+                                    <div className="flex-1 flex items-center gap-2">
+                                        <FormControl>
+                                            <input
+                                                type="color"
+                                                value={field.value || "#2563EB"}
+                                                onChange={(e) => field.onChange(e.target.value)}
+                                                className="h-9 w-12 cursor-pointer rounded border p-1"
+                                            />
+                                        </FormControl>
+                                        <span className="text-xs text-muted-foreground font-mono">{accentColor}</span>
+                                    </div>
+                                </div>
+                            </FormItem>
+                        )}
+                    />
                 </div>
             </div>
         </section>

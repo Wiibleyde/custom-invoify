@@ -1,10 +1,8 @@
 "use client";
-// Types
+
 import { InvoiceType } from "@/types";
-// Next
 import dynamic from "next/dynamic";
 import { use } from "react";
-// RHF
 import { useFormContext } from "react-hook-form";
 
 type ViewTemplatePageProps = {

@@ -5,7 +5,6 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 
@@ -93,7 +92,7 @@ export const InvoiceContextProvider = ({
 
   useEffect(() => {
     let savedInvoicesDefault;
-    if (typeof window !== undefined) {
+    if (typeof window !== "undefined") {
       // Saved invoices variables
       const savedInvoicesJSON = window.localStorage.getItem("savedInvoices");
       savedInvoicesDefault = savedInvoicesJSON
@@ -117,12 +116,15 @@ export const InvoiceContextProvider = ({
     return () => subscription.unsubscribe();
   }, [watch]);
 
-  // Get pdf url from blob
-  const pdfUrl = useMemo(() => {
-    if (invoicePdf.size > 0) {
-      return window.URL.createObjectURL(invoicePdf);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (invoicePdf.size === 0) {
+      setPdfUrl(null);
+      return;
     }
-    return null;
+    const url = window.URL.createObjectURL(invoicePdf);
+    setPdfUrl(url);
+    return () => window.URL.revokeObjectURL(url);
   }, [invoicePdf]);
 
   /**
@@ -131,10 +133,6 @@ export const InvoiceContextProvider = ({
    * @param {InvoiceType} data - The form values used to generate the PDF.
    */
   const onFormSubmit = (data: InvoiceType) => {
-    console.log("VALUE");
-    console.log(data);
-
-    // Call generate pdf method
     generatePdf(data);
   };
 
@@ -167,31 +165,21 @@ export const InvoiceContextProvider = ({
    */
   const generatePdf = useCallback(async (data: InvoiceType) => {
     setInvoicePdfLoading(true);
-
     try {
-      // Add locale to the data
-      const dataWithLocale = {
-        ...data,
-        details: {
-          ...data.details,
-          locale,
-        },
-      };
-
-      const response = await fetch(GENERATE_PDF_API, {
+      const payload = { ...data, details: { ...data.details, locale } };
+      const res = await fetch(GENERATE_PDF_API, {
         method: "POST",
-        body: JSON.stringify(dataWithLocale),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
-      const result = await response.blob();
-      setInvoicePdf(result);
+      if (!res.ok) throw new Error(`PDF generation failed: ${res.status}`);
 
-      if (result.size > 0) {
-        // Toast
-        pdfGenerationSuccess();
-      }
+      const blob = await res.blob();
+      setInvoicePdf(blob);
+      pdfGenerationSuccess();
     } catch (err) {
-      console.log(err);
+      console.error(err);
     } finally {
       setInvoicePdfLoading(false);
     }

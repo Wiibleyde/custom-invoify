@@ -89,5 +89,12 @@
     },
     "footer": {
         "developedBy": "Developed by"
+    },
+    "pdf": {
+        "invoiceTitle": "Invoice",
+        "paymentInformation": "Payment Information",
+        "contactInformation": "Contact",
+        "signature": "Signature",
+        "totalInWords": "Total in words"
     }
 }

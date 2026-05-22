@@ -25,11 +25,7 @@ const PdfViewer = () => {
 
     return (
         <div className="my-3">
-            {invoicePdf.size == 0 ? (
-                <LivePreview data={formValues} />
-            ) : (
-                <FinalPdf />
-            )}
+            {invoicePdf.size > 0 ? <FinalPdf /> : <LivePreview data={formValues} />}
         </div>
     );
 };

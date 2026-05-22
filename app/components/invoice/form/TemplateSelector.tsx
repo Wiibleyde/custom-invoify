@@ -18,12 +18,10 @@ import { Label } from "@/components/ui/label";
 import {
     BaseButton,
     InvoiceTemplate1,
-    InvoiceTemplate2,
 } from "@/app/components";
 
 // Template images
 import template1 from "@/public/assets/img/invoice-1-example.png";
-import template2 from "@/public/assets/img/invoice-2-example.png";
 
 // Icons
 import { Check } from "lucide-react";
@@ -41,13 +39,6 @@ const TemplateSelector = () => {
             description: "Template 1 description",
             img: template1,
             component: <InvoiceTemplate1 {...formValues} />,
-        },
-        {
-            id: 2,
-            name: "Template 2",
-            description: "Second template",
-            img: template2,
-            component: <InvoiceTemplate2 {...formValues} />,
         },
     ];
     return (

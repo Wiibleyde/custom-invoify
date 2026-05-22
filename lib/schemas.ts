@@ -88,22 +88,22 @@ const CustomInputSchema = z.object({
 
 const InvoiceSenderSchema = z.object({
     name: fieldValidators.name,
-    address: fieldValidators.address,
-    zipCode: fieldValidators.zipCode,
-    city: fieldValidators.city,
-    country: fieldValidators.country,
-    email: fieldValidators.email,
+    address: z.string(),
+    zipCode: z.string(),
+    city: z.string(),
+    country: z.string(),
+    email: z.union([z.string().email(), z.literal("")]),
     phone: fieldValidators.phone,
     customInputs: z.array(CustomInputSchema).optional(),
 });
 
 const InvoiceReceiverSchema = z.object({
     name: fieldValidators.name,
-    address: fieldValidators.address,
-    zipCode: fieldValidators.zipCode,
-    city: fieldValidators.city,
-    country: fieldValidators.country,
-    email: fieldValidators.email,
+    address: z.string(),
+    zipCode: z.string(),
+    city: z.string(),
+    country: z.string(),
+    email: z.union([z.string().email(), z.literal("")]),
     phone: fieldValidators.phone,
     customInputs: z.array(CustomInputSchema).optional(),
 });
@@ -145,7 +145,7 @@ const SignatureSchema = z.object({
 
 const InvoiceDetailsSchema = z.object({
     invoiceLogo: fieldValidators.stringOptional,
-    invoiceNumber: fieldValidators.stringMin1,
+    invoiceNumber: fieldValidators.stringOptional,
     invoiceDate: fieldValidators.date,
     dueDate: fieldValidators.date,
     purchaseOrderNumber: fieldValidators.stringOptional,
@@ -165,6 +165,7 @@ const InvoiceDetailsSchema = z.object({
     signature: SignatureSchema.optional(),
     updatedAt: fieldValidators.stringOptional,
     pdfTemplate: z.number(),
+    accentColor: fieldValidators.stringOptional,
 });
 
 const InvoiceSchema = z.object({

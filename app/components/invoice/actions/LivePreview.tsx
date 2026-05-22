@@ -45,35 +45,29 @@ export default function LivePreview({ data }: LivePreviewProps) {
     }, [locale]);
 
     const dataWithTranslations = useMemo(() => {
-        // Build PDF translations from existing steps translations
         const pdfTranslations: Record<string, string> = {
-            // From steps.invoiceDetails
-            invoiceNumber: translations.form?.steps?.invoiceDetails?.invoiceNumber || "Invoice #",
-            invoiceDate: translations.form?.steps?.invoiceDetails?.issuedDate || "Invoice date",
-            dueDate: translations.form?.steps?.invoiceDetails?.dueDate || "Due date",
-            
-            // From steps.fromAndTo
-            billTo: translations.form?.steps?.fromAndTo?.billTo || "Bill to:",
-            
-            // From steps.lineItems
+            invoiceTitle: translations.pdf?.invoiceTitle || "Invoice",
+            invoiceDate: translations.form?.steps?.invoiceDetails?.issuedDate || "Issue Date",
+            dueDate: translations.form?.steps?.invoiceDetails?.dueDate || "Due Date",
+            billTo: translations.form?.steps?.fromAndTo?.billTo || "Bill To",
             item: translations.form?.steps?.lineItems?.item || "Item",
             qty: translations.form?.steps?.lineItems?.quantity || "Qty",
             rate: translations.form?.steps?.lineItems?.rate || "Rate",
             amount: translations.form?.steps?.lineItems?.total || "Amount",
-            
-            // From steps.summary
             subtotal: translations.form?.steps?.summary?.subTotal || "Subtotal",
             discount: translations.form?.steps?.summary?.discount || "Discount",
             tax: translations.form?.steps?.summary?.tax || "Tax",
             shipping: translations.form?.steps?.summary?.shipping || "Shipping",
             total: translations.form?.steps?.summary?.totalAmount || "Total",
-            notes: translations.form?.steps?.summary?.additionalNotes || "Notes",
+            additionalNotes: translations.form?.steps?.summary?.additionalNotes || "Notes",
             paymentTerms: translations.form?.steps?.summary?.paymentTerms || "Payment Terms",
-            
-            // From steps.paymentInfo
             bankName: translations.form?.steps?.paymentInfo?.bankName || "Bank Name",
             accountName: translations.form?.steps?.paymentInfo?.accountName || "Account Name",
             accountNumber: translations.form?.steps?.paymentInfo?.accountNumber || "Account Number",
+            paymentInformation: translations.pdf?.paymentInformation || "Payment Information",
+            contactInformation: translations.pdf?.contactInformation || "Contact",
+            signature: translations.pdf?.signature || "Signature",
+            totalInWords: translations.pdf?.totalInWords || "Total in words",
         };
         
         return { ...data, translations: pdfTranslations };
@@ -91,7 +85,7 @@ export default function LivePreview({ data }: LivePreviewProps) {
     return (
         <>
             <Subheading>Live Preview:</Subheading>
-            <div className="border dark:border-gray-600 rounded-xl my-1">
+            <div id="invoice-print-root" className="border dark:border-gray-600 rounded-xl my-1">
                 <DynamicInvoiceTemplate {...dataWithTranslations} />
             </div>
         </>
